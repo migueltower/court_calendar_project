@@ -13,14 +13,14 @@ soup = BeautifulSoup(response.text, 'html.parser')
 table_rows = soup.find_all('tr')[1:]
 
 # Airtable configuration with Personal Access Token
-AIRTABLE_ACCESS_TOKEN = 'patWNcr7ifBkQ6sld'  # Replace with your personal access token
-AIRTABLE_BASE_ID = 'appqvyaQYtdZfJOBa'
-AIRTABLE_TABLE_ID = 'tblZxwC90ozs1D00l'  # Ensure there is no leading space here
+AIRTABLE_ACCESS_TOKEN ='patWNcr7ifBkQ6sld'  # Replace with your personal access token
+AIRTABLE_BASE_ID ='appqvyaQYtdZfJOBa'
+AIRTABLE_TABLE_ID ='tblZxwC90ozs1D00l'  # Ensure there is no leading space here
 
 # Airtable configuration with Personal Access Token
-AIRTABLE_ACCESS_TOKEN = 'patWNcr7ifBkQ6sld'  # Replace with your personal access token
-AIRTABLE_BASE_ID = 'appqvyaQYtdZfJOBa'
-AIRTABLE_TABLE_ID = 'tblZxwC90ozs1D00l'  # Ensure there is no leading space here
+AIRTABLE_ACCESS_TOKEN ='patWNcr7ifBkQ6sld'  # Replace with your personal access token
+AIRTABLE_BASE_ID ='appqvyaQYtdZfJOBa'
+AIRTABLE_TABLE_ID ='tblZxwC90ozs1D00l'  # Ensure there is no leading space here
 
 # URL of the court calendar page
 URL = 'https://superiorcourt.maricopa.gov/calendar/today/'
