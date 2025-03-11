@@ -1,29 +1,14 @@
 import requests
+import json
 from bs4 import BeautifulSoup
-from pyairtable import Table
 
 # Define the URL of the website
-URL = 'https://superiorcourt.maricopa.gov/calendar/today/' # Replace with the URL of the court calendar page
-
-# Make the request and parse the page
-response = requests.get (URL)
-soup = BeautifulSoup(response.text, 'html.parser')
-
-# Find all table rows with court information (excluding header row)
-table_rows = soup.find_all('tr')[1:]
+URL = 'https://superiorcourt.maricopa.gov/calendar/today/'  # URL of the court calendar page
 
 # Airtable configuration with Personal Access Token
-AIRTABLE_ACCESS_TOKEN ='patWNcr7ifBkQ6sld'  # Replace with your personal access token
-AIRTABLE_BASE_ID ='appqvyaQYtdZfJOBa'
-AIRTABLE_TABLE_ID ='tblZxwC90ozs1D00l'  # Ensure there is no leading space here
-
-# Airtable configuration with Personal Access Token
-AIRTABLE_ACCESS_TOKEN ='patWNcr7ifBkQ6sld'  # Replace with your personal access token
-AIRTABLE_BASE_ID ='appqvyaQYtdZfJOBa'
-AIRTABLE_TABLE_ID ='tblZxwC90ozs1D00l'  # Ensure there is no leading space here
-
-# URL of the court calendar page
-URL = 'https://superiorcourt.maricopa.gov/calendar/today/'
+AIRTABLE_ACCESS_TOKEN = 'patWNcr7ifBkQ6sld'  # Replace with your personal access token
+AIRTABLE_BASE_ID = 'appqvyaQYtdZfJOBa'
+AIRTABLE_TABLE_ID = 'tblZxwC90ozs1D00l'  # Ensure there is no leading space here
 
 # Make the request to get the page content
 response = requests.get(URL)
@@ -74,4 +59,4 @@ def send_to_airtable(data):
             print(f"Failed to add {record['Name']} to Airtable: {response.text}")
 
 # Send the data to Airtable
- write_to_airtable()(data)
+send_to_airtable(data)
