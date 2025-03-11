@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 URL = 'https://superiorcourt.maricopa.gov/calendar/today/'  # URL of the court calendar page
 
 # Airtable configuration with Personal Access Token
-AIRTABLE_ACCESS_TOKEN = 'patWNcr7ifBkQ6sld'  # Replace with your personal access token
+AIRTABLE_ACCESS_TOKEN = 'pat8M3C7BmZNodA1U.cf190e8b56703e89d5feb76184d90ebe6e294d01f89b3ebe63a9fbf50ba634cf'  # Replace with your personal access token
 AIRTABLE_BASE_ID = 'appqvyaQYtdZfJOBa'
 AIRTABLE_TABLE_ID = 'tblZxwC90ozs1D00l'  # Ensure there is no leading space here
 
