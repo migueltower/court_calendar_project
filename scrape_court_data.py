@@ -74,4 +74,4 @@ def send_to_airtable(data):
             print(f"Failed to add {record['Name']} to Airtable: {response.text}")
 
 # Send the data to Airtable
-send_to_airtable(data)
+ write_to_airtable()(data)
