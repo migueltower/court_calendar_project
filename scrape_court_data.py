@@ -32,7 +32,7 @@ def access_api():
 def get_records(table):
     # getting all records from the 'everything' view of the table and collecting just the ID and Case # fields
     # This comes in the form of a list of RecorDicts, dictionaries with multiple dictionaries contained within
-    records = table.all(view = 'viwKYJ9lIvDKK67rN', fields= ['ID','Case #'])
+    records = table.all(view = 'flddl553DGoygr031', fields= ['ID','Case Number Links'])
     for record in records:
         id_value = record.pop('id')
         # Add 'id' to the 'fields' dictionary
@@ -46,7 +46,7 @@ def scrape_records(records):
 
     # We only care about the people who have both an ID and a case # 
     # So this line of code filters for only the fields dictionaries that have both
-    list_of_fields_filtered = [i for i in list_of_fields if 'ID' in i and 'Case #' in i]
+    list_of_fields_filtered = [i for i in list_of_fields if 'ID' in i and 'Case Number Links' in i]
 
     # Step 2: hit every link in the list that is pulled
     list_of_links = []
@@ -56,7 +56,7 @@ def scrape_records(records):
         trial_dates = []
         sentencing_dates = []
         # get the link from the case number field 
-        link = record.get('Case #', '')
+        link = record.get('Case Number Links', '')
         # regex pattern to find a link inside parens
         regex_pattern = "\((.*?)\)"
         match = re.search(regex_pattern, link)
@@ -78,39 +78,26 @@ def scrape_records(records):
                 html = response.content
                 # make the long string of html useful by parsing it with bs4 
                 soup = BeautifulSoup(html, features="html.parser")
-                # find the table w id 'tblForms4' — this is where the calendar information is saved 
-                table = soup.find(id='tblForms4')
+                # find the table w id 'tblDocket12' — this is where the calendar information is saved 
+                table = soup.find(id='tblDocket12')
                 # collect the rows from that table with the 'row g-0' class -- these rows are where
                 # the calendar information is stored 
                 rows = table.find_all('div', class_='row g-0')
 
                 # for each row in rows 
                 for row in rows:
-                    # if program finds a div with the 'col-6 col-lg-2' class inside the row 
+                    # if program finds a div with the 'col-6 col-md-3 col-lg-3 col-xl-3' class inside the row 
                     # (so as to avoid the headers)
-                    if row.find('div', class_='col-6 col-lg-2'):
-                        # the date is always the first div, so find and save 
-                        date = row.find('div', class_='col-6 col-lg-2')
-                        # strip the html bullshit from the date and just save it as a date 
-                        date_text = date.get_text(strip=True)
-                        # This is the date format that we're working with : m or mm/ d or dd/ yyyy
-                        date_format = "%m/%d/%Y"
-                        # parse the date 
-                        date_clean = datetime.strptime(date_text, date_format) 
+                    if row.find('div', class_='col-6 col-md-3 col-lg-3 col-xl-3'):
                         # the event is in a div separate from the others, a div that has a class of 'col-6 col-lg-8', 
                         # so grab that 
-                        event = row.find('div', class_='col-6 col-lg-8')
+                        event = row.find('div', class_='col-6 col-md-3 col-lg-3 col-xl-3')
                         # strip the html bullshit from the event and save it 
                         event_clean = event.get_text(strip=True)
                         # put the event and the date in a little list of their own
                         # If the event is a trial or a sentencing  
-                        if event_clean in ["Trial"]:
-                            trial_lst = [event_clean, date_clean]
-                            trial_dates.append(trial_lst)
-                        elif event_clean in ["Sentencing"]:
-                            sentencing_lst = [event_clean, date_clean]
-                            sentencing_dates.append(sentencing_lst)
-
+                        if event_clean in ["Crime"]:
+                           crime_lst = [event_clean]
                     else:
                         pass
             except Exception as e:
@@ -119,22 +106,6 @@ def scrape_records(records):
         else:
             logger.info("no hyperlink")
 
-
-        future_trials = [date for date in trial_dates if date[1] >= TODAY]
-        future_sentences = [date for date in sentencing_dates if date[1] >= TODAY]
-        if future_trials:
-            closest_trial = min(future_trials, key=lambda x: x[1])
-            record['Trial Date'] = closest_trial[1].strftime("%Y-%m-%d")
-            #print(record)
-        else:
-            logger.info("No trial dates forward in time")
-        if future_sentences:
-            closest_sentence = min(future_sentences, key=lambda x: x[1])
-            record['Sentencing Date']= closest_sentence[1].strftime("%Y-%m-%d")
-            #print(record)
-        else:
-            logger.info("No sentencing dates forward in time")
-
     return list_of_fields_filtered
 
 def write_to_airtable():
@@ -142,27 +113,12 @@ def write_to_airtable():
     records = get_records(table)
     records_final = scrape_records(records)
     for record in records_final:
-        if 'Trial Date' in record and 'Sentencing Date' in record:
+        if 'Crime' in record:
             id = record['id']
-            trial_date = record['Trial Date']
-            sentencing_date = record['Sentencing Date']
-            if trial_date > sentencing_date:
-                fields = {'Trial Date': record['Trial Date'], 'Sentencing Date': record['Sentencing Date'], 'Flag Trial': 'yes'}
-            else:
-                fields = {'Trial Date': record['Trial Date'], 'Sentencing Date': record['Sentencing Date']}
-            table.update(id, fields) 
-        elif 'Trial Date' in record:
-            id = record['id']
-            fields = {'Trial Date': record['Trial Date']}
-            table.update(id, fields) 
-        elif 'Sentencing Date' in record:
-            id = record['id']
-            fields = {'Sentencing Date': record['Sentencing Date']}
+            crime = record['Crime']
+            fields = {'Crime': record['Crime']}
             table.update(id,fields)
-        if 'Co-defendant' in record:
-            id = record['id']
-            fields = {'Co-defendant': 'yes'}
-            table.update(id,fields)
+           
 
 # here, we're making it so if we want to pull functions from this 
 # script into other scripts -- essentially, if we want to treat this script as a MODULE
