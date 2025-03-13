@@ -1,3 +1,0 @@
-pyairtable
-beautifulsoup4
-requests
