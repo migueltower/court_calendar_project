@@ -1,0 +1,42 @@
+# name of workflow
+name: update trial and sentencing dates 
+
+# ways this automation works -- basically, what actions will trigger this script to run 
+on:
+  schedule:
+    - cron: '0 9 * * 5'
+  workflow_dispatch:
+
+# jobs this workflow will complete -- basically, what this thing has to do
+jobs:
+  update-homicide-table:
+    runs-on: ubuntu-latest
+    steps:
+    # Step 1: Prepare the environment
+    - name: Check out this repo
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    # Step 2: Install your shell and install python 3
+    - name: Install pipenv
+      run: pip install pipenv
+    - uses: actions/setup-python@v2
+      with:
+          python-version: '3.11'
+          cache: 'pipenv'
+    - run: |-
+          pipenv install --python `which python`
+
+    # Step 3: Run your script 
+    
+    - name: Run fetch.py
+      env: # set env variable
+          KEY: ${{ secrets.KEY }}
+      run: pipenv run python fetch.py
+
+
+  
+
+  
+    
+    
