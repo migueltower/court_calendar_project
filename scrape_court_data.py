@@ -26,7 +26,7 @@ def access_api():
     api = Api(api_key)
     # table variable uses the table class from pyairtable to access the Maricopa County Homicides table
     # in the homicides base
-    table = api.table('TK', 'TK')
+    table = api.table('app0Xlgm51H8EpF9l', 'tblb0yIYr91PzghXQ')
     return table
 
 def get_records(table):
